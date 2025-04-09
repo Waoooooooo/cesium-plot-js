@@ -180,6 +180,8 @@ export default class Base {
     this.eventHandler.setInputAction((evt: any) => {
       if (this.state === 'drawing') {
         this.finishDrawing();
+        //完成绘制,销毁提示框
+        this.tooltipController.destroy();
       }
     }, this.cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   }
