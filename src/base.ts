@@ -178,8 +178,6 @@ export default class Base {
 
   onDoubleClick() {
     this.eventHandler.setInputAction((evt: any) => {
-      debugger
-      alert('drawing')
       if (this.state === 'drawing') {
         this.finishDrawing();
       }
