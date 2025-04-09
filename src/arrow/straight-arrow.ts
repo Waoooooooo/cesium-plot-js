@@ -11,7 +11,7 @@ export default class StraightArrow extends Base {
   minPointsForShape: number;
 
   constructor(cesium: any, viewer: any, style?: LineStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'StraightArrow');
     this.cesium = cesium;
     this.minPointsForShape = 2;
     this.setState('drawing');

@@ -23,7 +23,7 @@ export default class DoubleArrow extends Base {
   isClockWise: boolean;
 
   constructor(cesium: any, viewer: any, style?: PolygonStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'DoubleArrow');
     this.cesium = cesium;
     this.headHeightFactor = 0.25;
     this.headWidthFactor = 0.3;

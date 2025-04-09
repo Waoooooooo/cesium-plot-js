@@ -11,7 +11,7 @@ export default class Curve extends Base {
 	t: number;
 
 	constructor(cesium: any, viewer: any, style?: LineStyle) {
-		super(cesium, viewer, style);
+		super(cesium, viewer, style, 'Curve');
 		this.cesium = cesium;
 		this.t = 0.3;
 		this.setState('drawing');

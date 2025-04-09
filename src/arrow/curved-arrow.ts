@@ -12,7 +12,7 @@ export default class CurvedArrow extends Base {
   minPointsForShape: number;
 
   constructor(cesium: any, viewer: any, style?: LineStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'CurvedArrow');
     this.cesium = cesium;
     this.t = 0.3;
     this.minPointsForShape = 2;

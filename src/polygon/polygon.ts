@@ -15,21 +15,16 @@ export default class Polygon extends Base {
   points: Cartesian3[] = [];
 
   constructor(cesium: any, viewer: any, style?: PolygonStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'Polygon');
     this.cesium = cesium;
     this.setState('drawing');
     this.onDoubleClick();
   }
   //重写双击方法
   onDoubleClick() {
-
-
-
     this.eventHandler.setInputAction((evt: any) => {
       //当双击时检查当前的点数
-      const className = this.constructor.name;
-      if (className === 'Polygon' && this.points.length < 3) {
-        // alert('点数不足，请至少绘制 3 个点以完成多边形绘制。');
+      if (this.className === 'Polygon' && this.points.length < 3) {
         this.tooltipController.show('点数不足，请至少绘制 3 个点以完成多边形绘制。')
         this.tooltipController.setStyle({
           color: 'red'

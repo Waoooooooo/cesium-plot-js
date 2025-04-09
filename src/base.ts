@@ -38,10 +38,12 @@ export default class Base {
   minPointsForShape: number = 0;
   tempLineEntity: CesiumTypeOnly.Entity;
   tooltipController:  CesiumTooltipController;
-  constructor(cesium: CesiumTypeOnly, viewer: CesiumTypeOnly.Viewer, style?: GeometryStyle) {
+  className?:string;
+  constructor(cesium: CesiumTypeOnly, viewer: CesiumTypeOnly.Viewer, style?: GeometryStyle,className = 'Base') {
     this.cesium = cesium;
     this.viewer = viewer;
     this.type = this.getType();
+    this.className = className //当前的类名
 
     // 创建提示框控制器
     this.tooltipController = new CesiumTooltipController(viewer, {

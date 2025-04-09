@@ -8,7 +8,7 @@ export default class Sector extends Base {
   points: Cartesian3[] = [];
 
   constructor(cesium: any, viewer: any, style?: PolygonStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'Sector');
     this.cesium = cesium;
     this.setState('drawing');
   }
@@ -24,7 +24,7 @@ export default class Sector extends Base {
     this.points.push(cartesian);
     if (this.points.length === 1) {
       this.onMouseMove();
-    }else if (this.points.length === 3) {
+    } else if (this.points.length === 3) {
       this.finishDrawing();
     }
   }

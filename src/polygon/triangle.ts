@@ -8,7 +8,7 @@ export default class Triangle extends Base {
   points: Cartesian3[] = [];
 
   constructor(cesium: any, viewer: any, style?: PolygonStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'Triangle');
     this.cesium = cesium;
     this.setState('drawing');
   }

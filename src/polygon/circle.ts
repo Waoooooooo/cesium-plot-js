@@ -10,7 +10,7 @@ export default class Circle extends Base {
   freehand: boolean;
 
   constructor(cesium: any, viewer: any, style?: PolygonStyle) {
-    super(cesium, viewer, style);
+    super(cesium, viewer, style, 'Circle');
     this.cesium = cesium;
     this.freehand = true;
     this.setState('drawing');
