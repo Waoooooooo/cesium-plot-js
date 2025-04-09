@@ -180,6 +180,11 @@ export default class Base {
   }
 
   finishDrawing() {
+
+    if ( this.type === 'polygon' && this.points.length < 3) {
+      alert('点数不足，请至少绘制 3 个点以完成多边形绘制。');
+      return;
+    }
     // Some polygons draw a separate line between the first two points before drawing the complete shape;
     // this line should be removed after drawing is complete.
     this.type === 'polygon' && this.lineEntity && this.viewer.entities.remove(this.lineEntity);
