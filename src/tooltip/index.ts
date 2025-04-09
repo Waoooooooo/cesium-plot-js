@@ -59,7 +59,10 @@ class CesiumTooltipController {
         padding: '8px 12px',
         borderRadius: '4px',
         maxWidth: '300px',
-        whiteSpace: 'nowrap',
+        whiteSpace: 'pre-wrap', // 允许折行
+        wordWrap: 'break-word', // 允许单词内断行
+        overflowWrap: 'break-word', // 更现代的属性
+        wordBreak: 'break-all' ,// 更激进的断行方式
         transition: 'opacity 0.2s ease-out'
       });
       
