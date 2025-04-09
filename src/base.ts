@@ -14,6 +14,7 @@ import EventDispatcher from './events';
 import cloneDeep from 'lodash.clonedeep';
 // import merge from 'lodash.merge';
 import * as Utils from './utils';
+import CesiumTooltipController from "./tooltip/index";
 
 export default class Base {
   cesium: typeof CesiumTypeOnly;
@@ -36,11 +37,21 @@ export default class Base {
   styleCache: GeometryStyle | undefined;
   minPointsForShape: number = 0;
   tempLineEntity: CesiumTypeOnly.Entity;
-
+  tooltipController:  CesiumTooltipController;
   constructor(cesium: CesiumTypeOnly, viewer: CesiumTypeOnly.Viewer, style?: GeometryStyle) {
     this.cesium = cesium;
     this.viewer = viewer;
     this.type = this.getType();
+
+    // 创建提示框控制器
+    this.tooltipController = new CesiumTooltipController(viewer, {
+      className: 'custom-tooltip',
+      offsetX: 15,
+      offsetY: 15
+    });
+
+    // 显示跟随鼠标的提示
+    this.tooltipController.show('点击地图开始绘制,双击结束绘制');
 
     this.mergeStyle(style);
     this.cartesianToLnglat = this.cartesianToLnglat.bind(this);
@@ -185,6 +196,9 @@ export default class Base {
       alert('点数不足，请至少绘制 3 个点以完成多边形绘制。');
       return;
     }
+
+    // 显示跟随鼠标的提示
+    this.tooltipController.destroy();
     // Some polygons draw a separate line between the first two points before drawing the complete shape;
     // this line should be removed after drawing is complete.
     this.type === 'polygon' && this.lineEntity && this.viewer.entities.remove(this.lineEntity);
