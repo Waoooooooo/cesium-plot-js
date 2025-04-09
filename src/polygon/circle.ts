@@ -25,9 +25,8 @@ export default class Circle extends Base {
    */
   addPoint(cartesian: Cartesian3) {
     this.points.push(cartesian);
-    debugger
     if (this.points.length === 1) {
-      this.onMouseMove();
+      this.onMouseMove(); 
     } else if (this.points.length > 1) {
       this.finishDrawing();
     }
