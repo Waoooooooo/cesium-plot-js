@@ -178,10 +178,10 @@ export default class Base {
 
   onDoubleClick() {
     this.eventHandler.setInputAction((evt: any) => {
+      debugger
+      alert('drawing')
       if (this.state === 'drawing') {
         this.finishDrawing();
-        //完成绘制,销毁提示框
-        this.tooltipController.destroy();
       }
     }, this.cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   }
@@ -195,6 +195,7 @@ export default class Base {
   }
 
   finishDrawing() {
+    this.tooltipController.destroy();
 
     // Some polygons draw a separate line between the first two points before drawing the complete shape;
     // this line should be removed after drawing is complete.
