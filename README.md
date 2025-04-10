@@ -14,7 +14,21 @@ cesium 军事标绘插件,支持绘制多边形、曲线、箭头等图形
 
 在线示例： [demo](https://ethan-zf.github.io/cesium-plot-js/examples/index.html)
 
-### CDN
+### 使用此版本 (和原版具体差异请查看日志CHANGELOG.md,0.0.6 以上部分)
+ 1. 下载源码后,打包
+```
+  npm i
+  npm run build
+```
+2. 将dist文件夹中的CesiumPlot.umd.js,拷贝到你的项目文件
+3. 引入文件,开始绘制
+```
+import  CesiumPlot from './CesiumPlot.umd';
+
+new CesiumPlot.FineArrow(Cesium, viewer);
+```
+
+### 使用原版
 
 1. 引入文件
 
