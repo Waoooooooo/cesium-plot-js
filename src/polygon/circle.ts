@@ -80,7 +80,7 @@ export default class Circle extends Base {
                 outline: style.outline,
                 outlineColor: style.outlineMaterial,
                 outlineWidth: style.outlineWidth,
-                height: 0,
+                height:undefined,
                 extrudedHeight: undefined,
                 heightReference: this.cesium.HeightReference.CLAMP_TO_GROUND
             }
