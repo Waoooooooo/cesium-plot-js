@@ -38,7 +38,7 @@ export default class Circle extends Base {
   updateMovingPoint(cartesian: Cartesian3) {
     const tempPoints = [...this.points, cartesian];
     const geometryPoints = this.createGraphic(tempPoints);
-    this.setGeometryPoints(geometryPoints);
+    this.setGeometryPoints([...tempPoints]);
     this.drawPolygon();
   }
 
@@ -47,10 +47,54 @@ export default class Circle extends Base {
    */
   updateDraggingPoint(cartesian: Cartesian3, index: number) {
     this.points[index] = cartesian;
-    const geometryPoints = this.createGraphic(this.points);
-    this.setGeometryPoints(geometryPoints);
+    this.setGeometryPoints([...this.points]);
     this.drawPolygon();
   }
+
+  drawPolygon() {
+    if (!this.polygonEntity) {
+        const style = this.style as PolygonStyle;
+        this.polygonEntity = this.viewer.entities.add({
+            position: this.geometryPoints[0], // Center position
+            ellipse: {
+                semiMajorAxis: new this.cesium.CallbackProperty(() => {
+                    if (this.geometryPoints.length < 2) return 0;
+                    return this.cesium.Cartesian3.distance(
+                        this.geometryPoints[0], 
+                        this.geometryPoints[1]
+                    );
+                }, false),
+                semiMinorAxis: new this.cesium.CallbackProperty(() => {
+                    if (this.geometryPoints.length < 2) return 0;
+                    return this.cesium.Cartesian3.distance(
+                        this.geometryPoints[0], 
+                        this.geometryPoints[1]
+                    );
+                }, false),
+                material: style.material,
+                outline: style.outline,
+                outlineColor: style.outlineMaterial?.color?.getValue(),
+                outlineWidth: style.outlineWidth,
+                height: 0,
+                extrudedHeight: undefined
+            }
+        });
+
+        // Optional: Add a radius line visualization
+        if (this.geometryPoints.length > 1) {
+            this.outlineEntity = this.viewer.entities.add({
+                polyline: {
+                    positions: new this.cesium.CallbackProperty(() => {
+                        return [this.geometryPoints[0], this.geometryPoints[1]];
+                    }, false),
+                    width: style.outlineWidth,
+                    material: style.outlineMaterial,
+                    clampToGround: true
+                }
+            });
+        }
+    }
+}
 
   createGraphic(positions: Cartesian3[]) {
     const lnglatPoints = positions.map((pnt) => {
@@ -58,7 +102,7 @@ export default class Circle extends Base {
     });
     const center = lnglatPoints[0];
     const pnt2 = lnglatPoints[1];
-
+    return []
     const radius = Utils.MathDistance(center, pnt2);
 
     const res = this.generatePoints(center, radius);
