@@ -53,46 +53,38 @@ export default class Circle extends Base {
 
   drawPolygon() {
     if (!this.polygonEntity) {
+        
+      // 圆心位置使用 CallbackProperty 动态获取
+      const getCenterPosition = new this.cesium.CallbackProperty(
+          () => this.geometryPoints[0] || this.cesium.Cartesian3.ZERO, 
+          false
+      );
+
+      // 半径计算也使用 CallbackProperty
+      const getRadius = new this.cesium.CallbackProperty(() => {
+          return this.geometryPoints.length >= 2 
+              ? this.cesium.Cartesian3.distance(
+                  this.geometryPoints[0], 
+                  this.geometryPoints[1]
+                )
+              : 0;
+      }, false);
+
         const style = this.style as PolygonStyle;
         this.polygonEntity = this.viewer.entities.add({
-            position: this.geometryPoints[0], // Center position
+            position:getCenterPosition, // Center position
             ellipse: {
-                semiMajorAxis: new this.cesium.CallbackProperty(() => {
-                    if (this.geometryPoints.length < 2) return 0;
-                    return this.cesium.Cartesian3.distance(
-                        this.geometryPoints[0], 
-                        this.geometryPoints[1]
-                    );
-                }, false),
-                semiMinorAxis: new this.cesium.CallbackProperty(() => {
-                    if (this.geometryPoints.length < 2) return 0;
-                    return this.cesium.Cartesian3.distance(
-                        this.geometryPoints[0], 
-                        this.geometryPoints[1]
-                    );
-                }, false),
+                semiMajorAxis: getRadius,
+                semiMinorAxis: getRadius,
                 material: style.material,
                 outline: style.outline,
-                outlineColor: style.outlineMaterial?.color?.getValue(),
+                outlineColor: style.outlineMaterial,
                 outlineWidth: style.outlineWidth,
                 height: 0,
-                extrudedHeight: undefined
+                extrudedHeight: undefined,
+                heightReference: this.cesium.HeightReference.CLAMP_TO_GROUND
             }
         });
-
-        // Optional: Add a radius line visualization
-        if (this.geometryPoints.length > 1) {
-            this.outlineEntity = this.viewer.entities.add({
-                polyline: {
-                    positions: new this.cesium.CallbackProperty(() => {
-                        return [this.geometryPoints[0], this.geometryPoints[1]];
-                    }, false),
-                    width: style.outlineWidth,
-                    material: style.outlineMaterial,
-                    clampToGround: true
-                }
-            });
-        }
     }
 }
 
