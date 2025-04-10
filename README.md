@@ -2,8 +2,6 @@
 
 cesium 军事标绘插件,支持绘制多边形、曲线、箭头等图形
 
-2025-04-09: 修复多边形标绘只有一个点时,双击会报错的问题
-
 
 ![image](https://ethan-zf.github.io/cesium-plot-js/examples/banner.png)
 
