@@ -37,9 +37,9 @@ export default class Base {
   styleCache: GeometryStyle | undefined;
   minPointsForShape: number = 0;
   tempLineEntity: CesiumTypeOnly.Entity;
-  tooltipController:  CesiumTooltipController;
-  className?:string;
-  constructor(cesium: CesiumTypeOnly, viewer: CesiumTypeOnly.Viewer, style?: GeometryStyle,className = 'Base') {
+  tooltipController: CesiumTooltipController;
+  className?: string;
+  constructor(cesium: CesiumTypeOnly, viewer: CesiumTypeOnly.Viewer, style?: GeometryStyle, className = 'Base') {
     this.cesium = cesium;
     this.viewer = viewer;
     this.type = this.getType();
@@ -108,8 +108,10 @@ export default class Base {
    *  editable state. Clicking on empty space sets it to a static state.
    */
   onClick() {
+
     this.eventHandler = new this.cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.eventHandler.setInputAction((evt: any) => {
+      debugger
       const pickedObject = this.viewer.scene.pick(evt.position);
       const hitEntities = this.cesium.defined(pickedObject) && pickedObject.id instanceof this.cesium.Entity;
       let activeEntity = this.polygonEntity;
@@ -149,14 +151,12 @@ export default class Base {
       } else if (this.state === 'static') {
         //When drawing multiple shapes, the click events for all shapes are triggered. Only when hitting a completed shape should it enter editing mode.
         if (hitEntities && activeEntity.id === pickedObject.id.id) {
-          const pickedGraphics = this.type === 'line' ? pickedObject.id.polyline : pickedObject.id.polygon;
-          if (this.cesium.defined(pickedGraphics)) {
-            // Hit Geometry Shape.
-            this.setState('edit');
-            this.addControlPoints();
-            this.draggable();
-            this.eventDispatcher.dispatchEvent('editStart');
-          }
+          // Hit Geometry Shape.
+          this.setState('edit');
+          this.addControlPoints();
+          this.draggable();
+          this.eventDispatcher.dispatchEvent('editStart');
+
         }
       }
     }, this.cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -228,6 +228,7 @@ export default class Base {
   }
 
   removeClickListener() {
+
     this.eventHandler.removeInputAction(this.cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
@@ -342,8 +343,11 @@ export default class Base {
         position,
         point: {
           pixelSize: 10,
-          heightReference: this.cesium.HeightReference.CLAMP_TO_GROUND,
+          // 修改高度参考为NONE，避免被地形/3D Tiles遮挡
+          heightReference: this.cesium.HeightReference.NONE,
           color: this.cesium.Color.RED,
+          // 添加深度测试设置
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
         },
       });
     });
@@ -357,6 +361,10 @@ export default class Base {
     // Listen for left mouse button press events
     this.controlPointsEventHandler.setInputAction((clickEvent: any) => {
       const pickedObject = this.viewer.scene.pick(clickEvent.position);
+      const hitEntities = this.cesium.defined(pickedObject) && pickedObject.id instanceof this.cesium.Entity;
+      let activeEntity = this.polygonEntity;
+
+
 
       if (this.cesium.defined(pickedObject)) {
         for (let i = 0; i < this.controlPoints.length; i++) {
@@ -369,8 +377,26 @@ export default class Base {
             break;
           }
         }
+
+
         // Disable default camera interaction.
         this.viewer.scene.screenSpaceCameraController.enableRotate = false;
+      }
+
+      //如果非控制点,非原本的图形,且是编辑状态,改为静态
+      if (this.state === 'edit' && !isDragging) {
+        //In edit mode, exit the editing state and delete control points when clicking outside the currently edited shape.
+        if (!hitEntities || activeEntity.id !== pickedObject.id.id) {
+          this.setState('static');
+          this.removeControlPoints();
+          this.disableDrag();
+              
+          // 确保恢复镜头控制
+          this.viewer.scene.screenSpaceCameraController.enableRotate = true;
+    
+          // Trigger 'drawEnd' and return the geometry shape points when exiting the edit mode.
+          this.eventDispatcher.dispatchEvent('editEnd', this.getPoints());
+        }
       }
     }, this.cesium.ScreenSpaceEventType.LEFT_DOWN);
 
@@ -398,6 +424,7 @@ export default class Base {
   }
 
   removeControlPoints() {
+    debugger
     if (this.controlPoints.length > 0) {
       this.controlPoints.forEach((entity: CesiumTypeOnly.Entity) => {
         this.viewer.entities.remove(entity);
