@@ -4,6 +4,8 @@
 #### ⚠️ Breaking changes 
 
 - 修改: 将circle修改成正圆,以前是椭圆 (2025-04-10)
+- 修改: 控制点不再被地形和3dtiles遮挡 
+- 修改: 在3dtiles上,鼠标长按空白区域时取消编辑状态 
 
 #### ✨ New Features
 
