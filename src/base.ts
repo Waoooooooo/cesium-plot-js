@@ -111,7 +111,6 @@ export default class Base {
 
     this.eventHandler = new this.cesium.ScreenSpaceEventHandler(this.viewer.canvas);
     this.eventHandler.setInputAction((evt: any) => {
-      debugger
       const pickedObject = this.viewer.scene.pick(evt.position);
       const hitEntities = this.cesium.defined(pickedObject) && pickedObject.id instanceof this.cesium.Entity;
       let activeEntity = this.polygonEntity;
@@ -424,7 +423,6 @@ export default class Base {
   }
 
   removeControlPoints() {
-    debugger
     if (this.controlPoints.length > 0) {
       this.controlPoints.forEach((entity: CesiumTypeOnly.Entity) => {
         this.viewer.entities.remove(entity);

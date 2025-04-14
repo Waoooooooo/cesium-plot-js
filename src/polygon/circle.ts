@@ -27,12 +27,12 @@ export default class Circle extends Base {
   addPoint(cartesian: Cartesian3) {
     if (this.points.length === 1 && 
         this.cesium.Cartesian3.equals(this.points[0], cartesian)) {
-        this.tooltipController.show('半径不能为0，请重新选择第二个点');
+        this.tooltipController.show('半径不能为0，请拖动鼠标确定半径');
         return; // 忽略重合的点
     }
     this.points.push(cartesian);
     if (this.points.length === 1) {
-        this.tooltipController.show('请选择第二个点');
+        this.tooltipController.show('请拖动鼠标确定半径');
         this.onMouseMove(); 
     } else if (this.points.length > 1) {
         this.finishDrawing();
