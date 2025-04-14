@@ -14,6 +14,7 @@ export default class Circle extends Base {
     this.cesium = cesium;
     this.freehand = true;
     this.setState('drawing');
+    this.tooltipController.show('点击地图确定圆心');
   }
 
   getType(): 'polygon' | 'line' {
@@ -24,12 +25,23 @@ export default class Circle extends Base {
    * Add points only on click events
    */
   addPoint(cartesian: Cartesian3) {
+    if (this.points.length === 1 && 
+        this.cesium.Cartesian3.equals(this.points[0], cartesian)) {
+        this.tooltipController.show('半径不能为0，请重新选择第二个点');
+        return; // 忽略重合的点
+    }
     this.points.push(cartesian);
     if (this.points.length === 1) {
-      this.onMouseMove(); 
+        this.tooltipController.show('请选择第二个点');
+        this.onMouseMove(); 
     } else if (this.points.length > 1) {
-      this.finishDrawing();
+        this.finishDrawing();
     }
+}
+
+
+  onDoubleClick() {
+    console.log('onDoubleClick...')
   }
 
   /**
