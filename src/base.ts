@@ -53,7 +53,7 @@ export default class Base {
     });
 
     // 显示跟随鼠标的提示
-    this.tooltipController.show('点击地图开始绘制,双击结束绘制');
+    this.tooltipController.show('点击地图开始绘制,双击结束绘制,右键取消绘制');
 
     this.mergeStyle(style);
     this.cartesianToLnglat = this.cartesianToLnglat.bind(this);
@@ -64,6 +64,18 @@ export default class Base {
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(this.cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
     this.onClick();
+    this.onRightClick();
+  }
+
+  /**
+   * 右键点击事件处理，用于取消当前绘制
+   */
+  onRightClick() {
+    this.eventHandler.setInputAction((evt: any) => {
+      if (this.state === 'drawing') {
+        this.remove();
+      }
+    }, this.cesium.ScreenSpaceEventType.RIGHT_CLICK);
   }
 
   mergeStyle(style: GeometryStyle | undefined) {
@@ -191,13 +203,23 @@ export default class Base {
     return distance > 10;
   }
 
-  finishDrawing() {
-    this.tooltipController.destroy();
+  cancel() {
+    this.removeClickListener();
+    this.removeMoveListener();
+    this.removeDoubleClickListener();
+    this.removeControlPoints();
+    this.disableDrag();
+    this.viewer.entities.remove(this.polygonEntity);
+    this.viewer.entities.remove(this.lineEntity);
+    this.viewer.entities.remove(this.tempLineEntity);
+    this.viewer.entities.remove(this.outlineEntity);
+  }
 
+  finishDrawing() {
     // Some polygons draw a separate line between the first two points before drawing the complete shape;
     // this line should be removed after drawing is complete.
     this.type === 'polygon' && this.lineEntity && this.viewer.entities.remove(this.lineEntity);
-
+    this.destroyTooltipController();
     this.removeMoveListener();
     // Editable upon initial drawing completion.
     this.setState('edit');
@@ -871,6 +893,11 @@ export default class Base {
     this.removeMoveListener();
     this.removeDoubleClickListener();
     this.removeControlPoints();
+    this.destroyTooltipController();
+  }
+
+  destroyTooltipController() {
+    this.tooltipController.destroy();
   }
 
   on(eventType: EventType, listener: EventListener) {

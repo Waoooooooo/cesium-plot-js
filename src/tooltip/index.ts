@@ -101,8 +101,23 @@ class CesiumTooltipController {
     if (this.mouseMoveHandler) return;
 
     this.mouseMoveHandler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
+    
+    // 添加防抖函数
+    const debounceSetPosition = (() => {
+      let animationFrameId: number | null = null;
+      return (x: number, y: number) => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        animationFrameId = requestAnimationFrame(() => {
+          this._setPosition(x, y);
+          animationFrameId = null;
+        });
+      };
+    })();
+    
     this.mouseMoveHandler.setInputAction((movement: { endPosition: Cartesian2 }) => {
-      this._setPosition(movement.endPosition.x, movement.endPosition.y);
+      debounceSetPosition(movement.endPosition.x, movement.endPosition.y);
     }, ScreenSpaceEventType.MOUSE_MOVE);
   }
 

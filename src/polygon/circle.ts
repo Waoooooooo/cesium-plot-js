@@ -14,7 +14,7 @@ export default class Circle extends Base {
     this.cesium = cesium;
     this.freehand = true;
     this.setState('drawing');
-    this.tooltipController.show('点击地图确定圆心');
+    this.tooltipController.show('点击地图确定圆心,右键取消绘制');
   }
 
   getType(): 'polygon' | 'line' {
@@ -32,7 +32,7 @@ export default class Circle extends Base {
     }
     this.points.push(cartesian);
     if (this.points.length === 1) {
-        this.tooltipController.show('请拖动鼠标确定半径');
+        this.tooltipController.show('请拖动鼠标确定半径,右键取消绘制');
         this.onMouseMove(); 
     } else if (this.points.length > 1) {
         this.finishDrawing();
@@ -49,7 +49,6 @@ export default class Circle extends Base {
    */
   updateMovingPoint(cartesian: Cartesian3) {
     const tempPoints = [...this.points, cartesian];
-    const geometryPoints = this.createGraphic(tempPoints);
     this.setGeometryPoints([...tempPoints]);
     this.drawPolygon();
   }
@@ -100,20 +99,6 @@ export default class Circle extends Base {
     }
 }
 
-  createGraphic(positions: Cartesian3[]) {
-    const lnglatPoints = positions.map((pnt) => {
-      return this.cartesianToLnglat(pnt);
-    });
-    const center = lnglatPoints[0];
-    const pnt2 = lnglatPoints[1];
-    return []
-    const radius = Utils.MathDistance(center, pnt2);
-
-    const res = this.generatePoints(center, radius);
-    const temp = [].concat(...res);
-    const cartesianPoints = this.cesium.Cartesian3.fromDegreesArray(temp);
-    return cartesianPoints;
-  }
 
   generatePoints(center, radius) {
     let x, y, angle;
